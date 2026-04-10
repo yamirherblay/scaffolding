@@ -29,41 +29,53 @@
 
     <section v-if="featuredProducts.length" class="featured-section q-py-lg">
       <div class="text-h5 text-center q-mb-md card-title">Destacados</div>
-      <div class="featured-scroll">
-        <q-card
-          v-for="product in featuredProducts"
+      <q-carousel
+        v-model="featuredSlide"
+        swipeable
+        animated
+        autoplay
+        infinite
+        navigation
+        padding
+        height="380px"
+        class="featured-carousel"
+      >
+        <q-carousel-slide
+          v-for="(product, i) in featuredProducts"
           :key="product.id"
-          class="featured-card"
-          flat
+          :name="i"
+          class="column no-wrap flex-center q-px-md"
         >
-          <q-img
-            :src="product.image || '/images/placeholder.svg'"
-            :ratio="16 / 9"
-            class="featured-img"
-          >
-            <div v-if="product.oferta" class="absolute-top-right q-pa-sm">
-              <q-badge color="red" text-color="white" label="Oferta" />
-            </div>
-            <div v-if="product.new" class="absolute-top-left q-pa-sm">
-              <q-badge color="primary" text-color="white" label="Nuevo" />
-            </div>
-          </q-img>
-          <q-card-section>
-            <div class="text-subtitle1 text-weight-medium card-title">{{ product.name }}</div>
-            <div class="text-h6 text-accent">{{ formatPrice(product) }}</div>
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              color="primary"
-              label="Ver en catálogo"
-              to="/catalogo"
-              unelevated
-              rounded
-              size="sm"
-            />
-          </q-card-actions>
-        </q-card>
-      </div>
+          <q-card class="featured-card" flat>
+            <q-img
+              :src="product.image || '/images/placeholder.svg'"
+              :ratio="16 / 9"
+              class="featured-img"
+            >
+              <div v-if="product.oferta" class="absolute-top-right q-pa-sm">
+                <q-badge color="red" text-color="white" label="Oferta" />
+              </div>
+              <div v-if="product.new" class="absolute-top-left q-pa-sm">
+                <q-badge color="primary" text-color="white" label="Nuevo" />
+              </div>
+            </q-img>
+            <q-card-section>
+              <div class="text-subtitle1 text-weight-medium card-title">{{ product.name }}</div>
+              <div class="text-h6 text-accent">{{ formatPrice(product) }}</div>
+            </q-card-section>
+            <q-card-actions align="center">
+              <q-btn
+                color="primary"
+                label="Ver en catálogo"
+                to="/catalogo"
+                unelevated
+                rounded
+                size="sm"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-carousel-slide>
+      </q-carousel>
     </section>
 
     <section class="categories-section q-pa-lg">
@@ -105,6 +117,7 @@ import type { Product } from 'src/stores/types';
 import { useMeta } from 'quasar';
 
 const { products, fetchProducts } = useProducts();
+const featuredSlide = ref(0);
 
 const featuredProducts = computed(() =>
   products.value
@@ -191,26 +204,14 @@ useMeta({
   background: #ffffff;
 }
 
-.featured-scroll {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  padding: 0 16px 16px;
-  scrollbar-width: none;
-}
-
-.featured-scroll::-webkit-scrollbar {
-  display: none;
+.featured-carousel {
+  background: transparent;
 }
 
 .featured-card {
-  min-width: 260px;
-  max-width: 280px;
-  flex-shrink: 0;
+  max-width: 300px;
+  width: 100%;
   border-radius: 12px;
-  scroll-snap-align: center;
 }
 
 .featured-img {
